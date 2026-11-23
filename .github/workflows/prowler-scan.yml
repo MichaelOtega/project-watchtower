@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v6
@@ -30,7 +30,7 @@ jobs:
         run: aws sts get-caller-identity
 
       - name: Set up Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -50,8 +50,9 @@ jobs:
             --ignore-exit-code-3
 
       - name: Upload Prowler scan artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: prowler-iso27001-baseline
           path: ./prowler-output
           retention-days: 14
+

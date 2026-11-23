@@ -21,9 +21,9 @@ data "aws_iam_policy_document" "github_oidc_trust" {
     }
 
     condition {
-      test     = "StringLike"
+      test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:MichaelOtega/Project-WatchTower:ref:refs/heads/main*"]
+      values   = ["repo:MichaelOtega@113137124/project-watchtower@1468635258:ref:refs/heads/main"]
     }
   }
 }
