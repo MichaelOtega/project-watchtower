@@ -1,0 +1,57 @@
+name: Watchtower Prowler ISO 27001 Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * *"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  prowler-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_PROWLER_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: WatchtowerProwlerScan
+          mask-aws-account-id: true
+
+      - name: Verify assumed AWS identity
+        run: aws sts get-caller-identity
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Prowler
+        run: |
+          python -m pip install --upgrade pip
+          pip install prowler
+
+      - name: Run Prowler ISO/IEC 27001:2022 baseline scan
+        run: |
+          mkdir -p prowler-output
+          prowler aws \
+            --region us-east-1 \
+            --compliance iso27001_2022_aws \
+            --output-formats json-ocsf csv html \
+            --output-directory ./prowler-output \
+            --ignore-exit-code-3
+
+      - name: Upload Prowler scan artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prowler-iso27001-baseline
+          path: ./prowler-output
+          retention-days: 14
