@@ -2,24 +2,24 @@
   "project": "Project Watchtower",
   "framework": "ISO/IEC 27001:2022",
   "region": "us-east-1",
-  "scan_timestamp": "2026-11-24 02:09:44.169759",
+  "scan_timestamp": "2026-11-24 10:42:51.162155",
   "summary": {
-    "total_evaluated": 251,
-    "automated_total": 192,
-    "pass": 141,
-    "raw_fail": 51,
-    "open_fail": 12,
-    "risk_accepted": 25,
-    "not_applicable": 14,
+    "total_evaluated": 252,
+    "automated_total": 193,
+    "pass": 148,
+    "raw_fail": 45,
+    "open_fail": 1,
+    "risk_accepted": 29,
+    "not_applicable": 15,
     "manual": 59,
-    "raw_compliance_pct": 73.4,
-    "governed_compliance_pct": 93.8
+    "raw_compliance_pct": 76.7,
+    "governed_compliance_pct": 99.5
   },
   "domains": [
     {
       "name": "A.5 Organizational controls",
-      "pass": 44,
-      "open_fail": 2,
+      "pass": 46,
+      "open_fail": 0,
       "governed": 7,
       "manual": 22
     },
@@ -39,9 +39,9 @@
     },
     {
       "name": "A.8 Technological controls",
-      "pass": 97,
-      "open_fail": 10,
-      "governed": 32,
+      "pass": 102,
+      "open_fail": 1,
+      "governed": 37,
       "manual": 15
     }
   ],
@@ -74,11 +74,11 @@
       "objective_id": "A.8.3",
       "objective_name": "Information Access Restriction",
       "check_id": "accessanalyzer_enabled_without_findings",
-      "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
       "severity": "Low",
       "resource": "watchtower-external-access-analyzer",
-      "details": "IAM Access Analyzer watchtower-external-access-analyzer has 2 active findings.",
+      "details": "IAM Access Analyzer watchtower-external-access-analyzer does not have active findings.",
       "governance": null
     },
     {
@@ -116,11 +116,25 @@
       "objective_id": "A.8.13",
       "objective_name": "Information Backup",
       "check_id": "backup_plans_exist",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Low",
+      "resource": "watchtower-baseline-backup-plan",
+      "details": "At least one Backup Plan exists: watchtower-baseline-backup-plan.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.13",
+      "control_name": "Information Backup",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.13",
+      "objective_name": "Information Backup",
+      "check_id": "backup_reportplans_exist",
       "raw_status": "FAIL",
       "effective_status": "FAIL",
       "severity": "Low",
       "resource": "********6822",
-      "details": "No Backup Plan exist.",
+      "details": "No Backup Report Plan exist.",
       "governance": null
     },
     {
@@ -662,11 +676,16 @@
       "objective_name": "Data Masking",
       "check_id": "cloudwatch_log_group_kms_encryption_enabled",
       "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
       "severity": "Medium",
       "resource": "/aws/cloudtrail/watchtower-management-trail",
       "details": "Log Group /aws/cloudtrail/watchtower-management-trail does not have AWS KMS keys associated.",
-      "governance": null
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "Customer-Managed KMS Keys (CMKs) cost $1.00/month plus API request fees, exceeding the zero-cost guardrail.",
+        "compensating_control": "CloudWatch Logs encrypts log group data at rest by default using AWS-managed AES-256 encryption, restricted to least-privilege IAM roles."
+      }
     },
     {
       "control_id": "A.8.15",
@@ -676,11 +695,16 @@
       "objective_name": "Logging",
       "check_id": "cloudwatch_log_group_kms_encryption_enabled",
       "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
       "severity": "Medium",
       "resource": "/aws/cloudtrail/watchtower-management-trail",
       "details": "Log Group /aws/cloudtrail/watchtower-management-trail does not have AWS KMS keys associated.",
-      "governance": null
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "Customer-Managed KMS Keys (CMKs) cost $1.00/month plus API request fees, exceeding the zero-cost guardrail.",
+        "compensating_control": "CloudWatch Logs encrypts log group data at rest by default using AWS-managed AES-256 encryption, restricted to least-privilege IAM roles."
+      }
     },
     {
       "control_id": "A.8.16",
@@ -690,11 +714,16 @@
       "objective_name": "Monitoring Activities",
       "check_id": "cloudwatch_log_group_kms_encryption_enabled",
       "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
       "severity": "Medium",
       "resource": "/aws/cloudtrail/watchtower-management-trail",
       "details": "Log Group /aws/cloudtrail/watchtower-management-trail does not have AWS KMS keys associated.",
-      "governance": null
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "Customer-Managed KMS Keys (CMKs) cost $1.00/month plus API request fees, exceeding the zero-cost guardrail.",
+        "compensating_control": "CloudWatch Logs encrypts log group data at rest by default using AWS-managed AES-256 encryption, restricted to least-privilege IAM roles."
+      }
     },
     {
       "control_id": "A.8.24",
@@ -704,11 +733,16 @@
       "objective_name": "Use of Cryptography",
       "check_id": "cloudwatch_log_group_kms_encryption_enabled",
       "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
       "severity": "Medium",
       "resource": "/aws/cloudtrail/watchtower-management-trail",
       "details": "Log Group /aws/cloudtrail/watchtower-management-trail does not have AWS KMS keys associated.",
-      "governance": null
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "Customer-Managed KMS Keys (CMKs) cost $1.00/month plus API request fees, exceeding the zero-cost guardrail.",
+        "compensating_control": "CloudWatch Logs encrypts log group data at rest by default using AWS-managed AES-256 encryption, restricted to least-privilege IAM roles."
+      }
     },
     {
       "control_id": "A.8.15",
@@ -773,11 +807,11 @@
       "objective_id": "A.8.15",
       "objective_name": "Logging",
       "check_id": "cloudwatch_log_group_retention_policy_specific_days_enabled",
-      "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
       "severity": "Medium",
       "resource": "/aws/cloudtrail/watchtower-management-trail",
-      "details": "Log Group /aws/cloudtrail/watchtower-management-trail has less than 365 days retention period (30 days).",
+      "details": "Log Group /aws/cloudtrail/watchtower-management-trail comply with 365 days retention period since it has 365 days.",
       "governance": null
     },
     {
@@ -787,11 +821,11 @@
       "objective_id": "A.8.16",
       "objective_name": "Monitoring Activities",
       "check_id": "cloudwatch_log_group_retention_policy_specific_days_enabled",
-      "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
       "severity": "Medium",
       "resource": "/aws/cloudtrail/watchtower-management-trail",
-      "details": "Log Group /aws/cloudtrail/watchtower-management-trail has less than 365 days retention period (30 days).",
+      "details": "Log Group /aws/cloudtrail/watchtower-management-trail comply with 365 days retention period since it has 365 days.",
       "governance": null
     },
     {
@@ -2153,7 +2187,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "DatadogIntegrationRole",
-      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 17 days ago (threshold: 60 days).",
+      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 18 days ago (threshold: 60 days).",
       "governance": null
     },
     {
@@ -2341,11 +2375,11 @@
       "objective_id": "A.5.15",
       "objective_name": "Access Control",
       "check_id": "iam_user_mfa_enabled_console_access",
-      "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
       "severity": "High",
       "resource": "MichaelAdmin",
-      "details": "User MichaelAdmin has Console Password enabled but MFA disabled.",
+      "details": "User MichaelAdmin has Console Password enabled and MFA enabled.",
       "governance": null
     },
     {
@@ -2355,11 +2389,11 @@
       "objective_id": "A.5.17",
       "objective_name": "Authentication Information",
       "check_id": "iam_user_mfa_enabled_console_access",
-      "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
       "severity": "High",
       "resource": "MichaelAdmin",
-      "details": "User MichaelAdmin has Console Password enabled but MFA disabled.",
+      "details": "User MichaelAdmin has Console Password enabled and MFA enabled.",
       "governance": null
     },
     {
@@ -2369,11 +2403,11 @@
       "objective_id": "A.8.5",
       "objective_name": "Secure Authentication",
       "check_id": "iam_user_mfa_enabled_console_access",
-      "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
       "severity": "High",
       "resource": "MichaelAdmin",
-      "details": "User MichaelAdmin has Console Password enabled but MFA disabled.",
+      "details": "User MichaelAdmin has Console Password enabled and MFA enabled.",
       "governance": null
     },
     {
@@ -2901,11 +2935,17 @@
       "objective_name": "Logging",
       "check_id": "s3_bucket_server_access_logging_enabled",
       "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "effective_status": "NOT_APPLICABLE",
       "severity": "Medium",
       "resource": "watchtower-access-logs-********6822-us-east-1",
       "details": "S3 Bucket watchtower-access-logs-********6822-us-east-1 has server access logging disabled.",
-      "governance": null
+      "governance": {
+        "decision": "NOT_APPLICABLE",
+        "category": "Recursive Logging Prevention",
+        "resource_contains": "watchtower-access-logs",
+        "rationale": "Enabling server access logging on the dedicated access-logs sink bucket itself creates an infinite recursive log-generation and billing loop.",
+        "compensating_control": "All primary workload and audit buckets (audit-vault, tfstate) enforce S3 Server Access Logging into this hardened, TLS-only, non-public sink bucket."
+      }
     },
     {
       "control_id": "A.8.15",
