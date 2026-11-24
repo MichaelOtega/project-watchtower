@@ -7,7 +7,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   prowler-audit:
@@ -56,3 +56,18 @@ jobs:
           path: ./prowler-output
           retention-days: 14
 
+      - name: Parse Prowler telemetry for dashboard
+        run: python scripts/parse_prowler.py
+
+      - name: Commit sanitized dashboard telemetry
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dashboard/data/latest.json dashboard/data/history.json
+          if git diff --cached --quiet; then
+            echo "No dashboard telemetry changes to commit."
+          else
+            git commit -m "chore(telemetry): update ISO 27001 dashboard data [skip ci]"
+            git pull --rebase
+            git push
+          fi

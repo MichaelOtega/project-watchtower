@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": "2026-11-23 23:51:34.089794",
+    "pass": 83,
+    "raw_fail": 81,
+    "open_fail": 44,
+    "governed": 37,
+    "raw_compliance_pct": 50.6,
+    "governed_compliance_pct": 73.2
+  }
+]

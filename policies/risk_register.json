@@ -1,0 +1,125 @@
+{
+  "metadata": {
+    "framework": "ISO/IEC 27001:2022",
+    "owner": "Michael Loya (CyberBoy) - Cloud Security & GRC",
+    "review_cycle": "Quarterly",
+    "last_reviewed": "2026-11-24",
+    "budget_guardrail_usd": 1.00
+  },
+  "exceptions": {
+    "cloudtrail_kms_encryption_enabled": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "Customer-Managed KMS Keys (CMKs) cost $1.00/month per key plus API request fees, exceeding the $0.00 lab guardrail.",
+      "compensating_control": "Audit Vault enforces default SSE-S3 (AES-256) encryption at rest, TLS-only bucket policy, Block Public Access, and CloudTrail log file integrity validation."
+    },
+    "s3_bucket_kms_encryption": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "KMS CMK billing ($1.00/key/month) is excluded under zero-cost architecture.",
+      "compensating_control": "All S3 buckets enforce AES-256 server-side encryption, HTTPS-only transport, versioning, and account-level Block Public Access."
+    },
+    "cloudtrail_s3_dataevents_read_enabled": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "CloudTrail S3 Data Events incur per-100,000-event charges outside the free management-event trail.",
+      "compensating_control": "S3 Server Access Logging captures object-level access telemetry alongside free CloudTrail management event logging."
+    },
+    "cloudtrail_s3_dataevents_write_enabled": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "CloudTrail S3 Data Events incur per-100,000-event charges outside the free management-event trail.",
+      "compensating_control": "S3 Versioning and Server Access Logging record object write/delete operations and protect against accidental overwrite."
+    },
+    "config_recorder_all_regions_enabled": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "AWS Config charges per configuration item recorded and per rule evaluation.",
+      "compensating_control": "Daily scheduled Prowler CSPM scans via GitHub Actions OIDC plus Terraform state drift tracking provide continuous configuration assurance."
+    },
+    "s3_bucket_cross_region_replication": {
+      "decision": "RISK_ACCEPTED",
+      "category": "Single-Region Scope",
+      "rationale": "Cross-Region Replication introduces inter-region data transfer and duplicate storage costs for non-production audit logs.",
+      "compensating_control": "Single-region us-east-1 S3 Standard durability (11 nines across multiple AZs) with versioning enabled."
+    },
+    "vpc_different_regions": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Single-Region Scope",
+      "rationale": "Project Watchtower operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
+      "compensating_control": "All infrastructure is codified in Terraform and can be redeployed into a secondary region on demand."
+    },
+    "organizations_account_part_of_organizations": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Standalone Account",
+      "rationale": "Standalone single-account environment; AWS Organizations multi-account landing zone is not required for scope.",
+      "compensating_control": "Strict IAM least-privilege roles, immutable OIDC trust claims, and account-level guardrails."
+    },
+    "organizations_tags_policies_enabled_and_attached": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Standalone Account",
+      "rationale": "Depends on AWS Organizations; not applicable to a standalone account.",
+      "compensating_control": "Consistent resource tagging enforced via Terraform default_tags in providers.tf."
+    },
+    "bedrock_model_invocation_logging_enabled": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Unused Service",
+      "rationale": "Amazon Bedrock is not provisioned or invoked in this AWS account.",
+      "compensating_control": "Zero Bedrock usage verified via CloudTrail and AWS Budgets monitoring."
+    },
+    "iam_role_access_not_stale_to_bedrock": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Unused Service",
+      "rationale": "Amazon Bedrock is unused; IAM roles do not execute Bedrock workloads.",
+      "compensating_control": "Prowler scanner role uses read-only AWS managed policies with no Bedrock invocation permissions."
+    },
+    "iam_user_access_not_stale_to_bedrock": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Unused Service",
+      "rationale": "Amazon Bedrock is unused; IAM users do not invoke Bedrock APIs.",
+      "compensating_control": "Zero Bedrock usage monitored via CloudTrail."
+    },
+    "iam_user_hardware_mfa_enabled": {
+      "decision": "RISK_ACCEPTED",
+      "category": "Compensating Control",
+      "rationale": "Physical FIDO2/hardware MFA tokens are not issued for this solo lab environment.",
+      "compensating_control": "Virtual TOTP Authenticator MFA enforced for console access and keyless OIDC federation used for CI/CD automation."
+    },
+    "iam_avoid_root_usage": {
+      "decision": "RISK_ACCEPTED",
+      "category": "Historical Bootstrap Event",
+      "rationale": "Initial AWS account creation and billing activation required root sign-in within the lookback window.",
+      "compensating_control": "Root account is retired from daily operations; CloudWatch metric filter and alarm alert immediately on any future root usage."
+    },
+    "iam_aws_attached_policy_no_administrative_privileges": {
+      "decision": "RISK_ACCEPTED",
+      "category": "Bootstrap IaC Operations",
+      "rationale": "Local Terraform bootstrap identity requires administrative permissions to provision IAM, CloudTrail, S3, and CloudWatch controls.",
+      "compensating_control": "Automated GitHub Actions scanning uses strictly read-only OIDC role (SecurityAudit + ViewOnlyAccess); admin profile is local-only and never stored in CI/CD."
+    },
+    "cloudwatch_changes_to_network_gateways_alarm_configured": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / CloudWatch Always Free Cap",
+      "rationale": "AWS CloudWatch Always Free tier caps custom metrics and standard alarms at 10; top 10 highest-impact CIS/ISO alarms are prioritized.",
+      "compensating_control": "All gateway API events remain captured in CloudTrail and CloudWatch Logs; VPC and NACL alarms cover perimeter changes."
+    },
+    "cloudwatch_log_metric_filter_aws_organizations_changes": {
+      "decision": "NOT_APPLICABLE",
+      "category": "FinOps / CloudWatch Always Free Cap",
+      "rationale": "AWS Organizations is not enabled; alarm slot preserved for active-service controls within the 10-alarm free cap.",
+      "compensating_control": "Standalone account with full CloudTrail management event recording."
+    },
+    "cloudwatch_log_metric_filter_disable_or_scheduled_deletion_of_kms_cmk": {
+      "decision": "NOT_APPLICABLE",
+      "category": "FinOps / CloudWatch Always Free Cap",
+      "rationale": "No Customer-Managed KMS Keys exist in this account; alarm slot preserved within the 10-alarm free cap.",
+      "compensating_control": "All buckets rely on AWS-managed SSE-S3 encryption; any future CMK creation is logged in CloudTrail."
+    },
+    "cloudwatch_log_metric_filter_and_alarm_for_aws_config_configuration_changes_enabled": {
+      "decision": "NOT_APPLICABLE",
+      "category": "FinOps / CloudWatch Always Free Cap",
+      "rationale": "AWS Config is not enabled; alarm slot preserved within the 10-alarm free cap.",
+      "compensating_control": "CloudTrail configuration change alarm and daily Prowler scans monitor audit pipeline integrity."
+    }
+  }
+}
