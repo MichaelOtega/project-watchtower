@@ -133,6 +133,12 @@
       "resource_contains": "watchtower-access-logs",
       "rationale": "Enabling server access logging on the dedicated access-logs sink bucket itself creates an infinite recursive log-generation and billing loop.",
       "compensating_control": "All primary workload and audit buckets (audit-vault, tfstate) enforce S3 Server Access Logging into this hardened, TLS-only, non-public sink bucket."
+    },
+    "backup_reportplans_exist": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "AWS Backup Audit Manager report plans and compliance frameworks introduce AWS Config resource tracking and evaluation fees, exceeding the $0.00/mo budget guardrail, and no production workloads are assigned to backup jobs.",
+      "compensating_control": "Baseline AWS Backup vault and daily retention plan are codified in Terraform; state and audit evidence are versioned in S3 and continuously verified via Prowler and GitHub Actions."
     }
   }
 }

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Watchtower — ISO/IEC 27001:2022 Cloud Security Dashboard</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L4 5v6c0 5.25 3.4 10.15 8 11.5 4.6-1.35 8-6.25 8-11.5V5l-8-3z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <h1 id="projectTitle">Project Watchtower</h1>
+          <p class="subtitle">Automated AWS Cloud Security Posture &amp; ISO/IEC 27001:2022 Compliance</p>
+        </div>
+      </div>
+
+      <div class="header-meta">
+        <span class="meta-pill pill-blue" id="frameworkBadge">ISO/IEC 27001:2022</span>
+        <span class="meta-pill" id="regionBadge">AWS us-east-1</span>
+        <span class="meta-pill pill-green" id="budgetBadge">Guardrail: $0.00/mo</span>
+        <span class="meta-pill" id="lastScanBadge">Last Scan: --</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="errorBanner" class="error-banner hidden"></div>
+
+    <!-- Executive KPI Cards -->
+    <section class="kpi-grid" aria-label="Compliance summary metrics">
+      <article class="card kpi-card kpi-primary">
+        <div class="kpi-label">Governed Compliance</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpiGovernedPct">--%</span>
+          <span class="kpi-delta" id="kpiGovernedDelta"></span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="kpiGovernedBar"></div></div>
+        <div class="kpi-sub" id="kpiGovernedSub">Pass + Governed / Automated</div>
+      </article>
+
+      <article class="card kpi-card">
+        <div class="kpi-label">Raw Automated Score</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpiRawPct">--%</span>
+          <span class="kpi-delta" id="kpiRawDelta"></span>
+        </div>
+        <div class="progress-track"><div class="progress-fill fill-sky" id="kpiRawBar"></div></div>
+        <div class="kpi-sub" id="kpiRawSub">Strict Prowler Pass / Automated</div>
+      </article>
+
+      <article class="card kpi-card">
+        <div class="kpi-label">Open Failures</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpiOpenFail">--</span>
+          <span class="kpi-delta" id="kpiOpenFailDelta"></span>
+        </div>
+        <div class="kpi-sub" id="kpiOpenFailSub">Unmitigated automated findings</div>
+      </article>
+
+      <article class="card kpi-card">
+        <div class="kpi-label">Passed Automated</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value text-blue" id="kpiPass">--</span>
+        </div>
+        <div class="kpi-sub" id="kpiPassSub">of -- automated checks</div>
+      </article>
+
+      <article class="card kpi-card">
+        <div class="kpi-label">Governed &amp; Manual</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value text-navy" id="kpiGovernedCount">--</span>
+          <span class="kpi-mini" id="kpiManualCount">-- manual</span>
+        </div>
+        <div class="kpi-sub" id="kpiGovBreakdown">-- risk accepted / -- N/A</div>
+      </article>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-grid">
+      <article class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Compliance Remediation Trajectory</h2>
+            <p class="card-sub">Historical progression across automated Prowler scans</p>
+          </div>
+          <span class="badge badge-info" id="scanCountBadge">0 Scans</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </article>
+
+      <article class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Annex A Domain Posture</h2>
+            <p class="card-sub">Control outcomes grouped by ISO/IEC 27001:2022 domain</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="domainChart"></canvas>
+        </div>
+      </article>
+    </section>
+
+    <!-- Tabs & Action Controls -->
+    <section class="card table-section">
+      <div class="tabs-bar">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="findings" role="tab" aria-selected="true">Control Explorer</button>
+          <button class="tab" data-tab="risks" role="tab" aria-selected="false">Risk Register &amp; Compensating Controls</button>
+        </div>
+        <div class="actions">
+          <button class="btn btn-outline" id="exportCsvBtn">Export CSV</button>
+          <button class="btn btn-primary" id="printReportBtn">Print Audit View</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Control Explorer -->
+      <div id="tab-findings" class="tab-panel active">
+        <div class="filters-bar">
+          <input type="search" id="searchInput" class="search-input" placeholder="Search control ID, check ID, resource, or details..." />
+          <select id="domainFilter" class="select-input">
+            <option value="ALL">All Annex A Domains</option>
+          </select>
+          <div class="status-pills" id="statusPills">
+            <button class="pill active" data-status="ALL">All</button>
+            <button class="pill" data-status="FAIL">Open Fail</button>
+            <button class="pill" data-status="PASS">Pass</button>
+            <button class="pill" data-status="RISK_ACCEPTED">Risk Accepted</button>
+            <button class="pill" data-status="NOT_APPLICABLE">N/A</button>
+            <button class="pill" data-status="MANUAL">Manual</button>
+          </div>
+        </div>
+
+        <div class="results-meta" id="resultsMeta">Showing 0 controls</div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Control</th>
+                <th>Domain</th>
+                <th>Check &amp; Resource</th>
+                <th>Status</th>
+                <th>Evidence / Governance</th>
+              </tr>
+            </thead>
+            <tbody id="findingsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Risk Register -->
+      <div id="tab-risks" class="tab-panel">
+        <div class="meta-strip" id="riskMetaStrip"></div>
+        <div class="risk-cards" id="riskCards"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span id="footerOwner">Owner: --</span>
+      <span>Powered by Terraform, Prowler, GitHub OIDC &amp; Automated GRC Policy-as-Code</span>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

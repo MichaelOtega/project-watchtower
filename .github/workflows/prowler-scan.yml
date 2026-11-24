@@ -9,6 +9,10 @@ permissions:
   id-token: write
   contents: write
 
+concurrency:
+  group: watchtower-prowler-scan
+  cancel-in-progress: false
+
 jobs:
   prowler-audit:
     runs-on: ubuntu-latest
