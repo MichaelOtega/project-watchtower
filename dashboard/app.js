@@ -61,7 +61,7 @@
     const guardrail = meta.budget_guardrail_usd != null ? `$${Number(meta.budget_guardrail_usd).toFixed(2)}/mo cap` : "$0.00/mo";
     document.getElementById("budgetBadge").textContent = `FinOps Guardrail: ${guardrail}`;
     document.getElementById("lastScanBadge").textContent = `Last Scan: ${formatTimestamp(latest.scan_timestamp)}`;
-    document.getElementById("footerOwner").textContent = `Owner: ${meta.owner || "Michael Loya (CyberBoy)"} | Review Cycle: ${meta.review_cycle || "Quarterly"}`;
+    document.getElementById("footerOwner").textContent = `Owner: ${meta.owner || "Michael Loya (SecOps & GRC)"} | Review Cycle: ${meta.review_cycle || "Quarterly"}`;
   }
 
   function setDelta(elId, diff, suffix, invertGood) {
@@ -372,7 +372,7 @@
       );
       doc.setFontSize(8.5);
       doc.text(
-        `Last Scan: ${formatTimestamp(latest.scan_timestamp)} | Owner: ${meta.owner || "Michael Loya (CyberBoy)"} | Review Cycle: ${meta.review_cycle || "Quarterly"}`,
+        `Last Scan: ${formatTimestamp(latest.scan_timestamp)} | Owner: ${meta.owner || "Michael Loya (SecOps & GRC)"} | Review Cycle: ${meta.review_cycle || "Quarterly"}`,
         margin,
         57
       );

@@ -130,6 +130,6 @@ Open `http://localhost:8000` in your browser to explore controls, filter by Anne
 
 ## Ownership & Governance
 
-* **Author & Risk Owner:** Michael Loya (CyberBoy) -- Cloud Security & GRC
+* **Author & Risk Owner:** Michael Loya (SecOps & GRC)
 * **Compliance Standard:** ISO/IEC 27001:2022
 * **Risk Register Review Cycle:** Quarterly

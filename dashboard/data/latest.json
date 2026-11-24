@@ -47,7 +47,7 @@
   ],
   "risk_register_meta": {
     "framework": "ISO/IEC 27001:2022",
-    "owner": "Michael Loya (CyberBoy) - Cloud Security & GRC",
+    "owner": "Michael Loya (SecOps & GRC)",
     "review_cycle": "Quarterly",
     "last_reviewed": "2026-11-24",
     "budget_guardrail_usd": 1.0
