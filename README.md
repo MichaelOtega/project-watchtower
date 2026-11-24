@@ -1,4 +1,4 @@
-# Project Watchtower
+# Watchtower CSPM
 
 [![Framework](https://img.shields.io/badge/Framework-ISO%2FIEC%2027001%3A2022-0f294a?style=flat-square)](https://michaelotega.github.io/project-watchtower/)
 [![Cloud](https://img.shields.io/badge/Cloud-AWS%20(us--east--1)-1d4ed8?style=flat-square)](https://michaelotega.github.io/project-watchtower/)
@@ -8,7 +8,7 @@
 
 **Live Compliance Dashboard:** [https://michaelotega.github.io/project-watchtower/](https://michaelotega.github.io/project-watchtower/)
 
-Project Watchtower is an automated Cloud Security Posture Management (CSPM) and Governance, Risk, and Compliance (GRC) pipeline for AWS. It continuously audits infrastructure against **ISO/IEC 27001:2022**, enforces remediations as Terraform Infrastructure-as-Code, evaluates compensating controls through a version-controlled **Risk Register**, and publishes an interactive executive dashboard with one-click CSV and vector PDF audit exports -- all under a strict **$0.00/month** AWS spend guardrail.
+Watchtower CSPM is an automated Cloud Security Posture Management (CSPM) and Governance, Risk, and Compliance (GRC) pipeline for AWS. It continuously audits infrastructure against **ISO/IEC 27001:2022**, enforces remediations as Terraform Infrastructure-as-Code, evaluates compensating controls through a version-controlled **Risk Register**, and publishes an interactive executive dashboard with one-click CSV and vector PDF audit exports -- all under a strict **$0.00/month** AWS spend guardrail.
 
 ---
 
@@ -73,7 +73,7 @@ Across iterative Terraform hardening passes and formal risk governance, automate
 
 ## FinOps Guardrails
 
-Project Watchtower enforces an automated AWS Budgets guardrail (`$1.00/month` alert ceiling, `$0.00/month` target spend) by balancing security engineering with real-world cloud FinOps:
+Watchtower CSPM enforces an automated AWS Budgets guardrail (`$1.00/month` alert ceiling, `$0.00/month` target spend) by balancing security engineering with real-world cloud FinOps:
 
 | Control Area | Paid Option Avoided | Zero-Cost Engineering / Compensating Control |
 | :--- | :--- | :--- |

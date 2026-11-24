@@ -156,7 +156,7 @@ def main() -> int:
     scan_timestamp = assessment_date or datetime.now(timezone.utc).isoformat()
 
     payload = {
-        "project": "Project Watchtower",
+        "project": "Watchtower CSPM",
         "framework": "ISO/IEC 27001:2022",
         "region": region,
         "scan_timestamp": scan_timestamp,

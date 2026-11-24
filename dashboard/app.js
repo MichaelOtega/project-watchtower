@@ -55,7 +55,7 @@
 
   function renderHeader(latest) {
     const meta = latest.risk_register_meta || {};
-    document.getElementById("projectTitle").textContent = latest.project || "Project Watchtower";
+    document.getElementById("projectTitle").textContent = latest.project || "Watchtower CSPM";
     document.getElementById("frameworkBadge").textContent = latest.framework || meta.framework || "ISO/IEC 27001:2022";
     document.getElementById("regionBadge").textContent = `AWS ${latest.region || "us-east-1"}`;
     const guardrail = meta.budget_guardrail_usd != null ? `$${Number(meta.budget_guardrail_usd).toFixed(2)}/mo cap` : "$0.00/mo";
@@ -360,7 +360,7 @@
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(16);
-      doc.text(`${latest.project || "Project Watchtower"} - Audit Evidence Report`, margin, 27);
+      doc.text(`${latest.project || "Watchtower CSPM"} - Audit Evidence Report`, margin, 27);
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
@@ -590,7 +590,7 @@
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8);
         doc.setTextColor(100, 116, 139);
-        doc.text(`${latest.project || "Project Watchtower"} - ISO/IEC 27001:2022 Audit Export (${exportDate})`, margin, pageH - 16);
+        doc.text(`${latest.project || "Watchtower CSPM"} - ISO/IEC 27001:2022 Audit Export (${exportDate})`, margin, pageH - 16);
         doc.text(`Page ${i} of ${totalPages}`, pageW - margin, pageH - 16, { align: "right" });
       }
 

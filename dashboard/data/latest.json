@@ -1,5 +1,5 @@
 {
-  "project": "Project Watchtower",
+  "project": "Watchtower CSPM",
   "framework": "ISO/IEC 27001:2022",
   "region": "us-east-1",
   "scan_timestamp": "2026-11-24 11:46:43.067900",
@@ -2990,7 +2990,7 @@
       "governance": {
         "decision": "NOT_APPLICABLE",
         "category": "Single-Region Scope",
-        "rationale": "Project Watchtower operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
+        "rationale": "Watchtower CSPM operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
         "compensating_control": "All infrastructure is codified in Terraform and can be redeployed into a secondary region on demand."
       }
     },
@@ -3009,7 +3009,7 @@
       "governance": {
         "decision": "NOT_APPLICABLE",
         "category": "Single-Region Scope",
-        "rationale": "Project Watchtower operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
+        "rationale": "Watchtower CSPM operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
         "compensating_control": "All infrastructure is codified in Terraform and can be redeployed into a secondary region on demand."
       }
     },
@@ -3028,7 +3028,7 @@
       "governance": {
         "decision": "NOT_APPLICABLE",
         "category": "Single-Region Scope",
-        "rationale": "Project Watchtower operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
+        "rationale": "Watchtower CSPM operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
         "compensating_control": "All infrastructure is codified in Terraform and can be redeployed into a secondary region on demand."
       }
     },

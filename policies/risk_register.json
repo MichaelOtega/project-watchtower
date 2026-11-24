@@ -46,7 +46,7 @@
     "vpc_different_regions": {
       "decision": "NOT_APPLICABLE",
       "category": "Single-Region Scope",
-      "rationale": "Project Watchtower operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
+      "rationale": "Watchtower CSPM operates exclusively in us-east-1 with no production VPC workloads requiring multi-region active-active failover.",
       "compensating_control": "All infrastructure is codified in Terraform and can be redeployed into a secondary region on demand."
     },
     "organizations_account_part_of_organizations": {
