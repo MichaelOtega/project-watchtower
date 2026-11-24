@@ -2,7 +2,7 @@
   "project": "Project Watchtower",
   "framework": "ISO/IEC 27001:2022",
   "region": "us-east-1",
-  "scan_timestamp": "2026-11-24 10:42:51.162155",
+  "scan_timestamp": "2026-11-24 11:46:43.067900",
   "summary": {
     "total_evaluated": 252,
     "automated_total": 193,
