@@ -50,8 +50,7 @@
       NOT_APPLICABLE: "NOT APPLICABLE",
       MANUAL: "MANUAL"
     };
-    const cls = `badge badge-${norm.toLowerCase()}`;
-    return `<span class="${cls}">${esc(labelMap[norm] || norm)}</span>`;
+    return `<span class="badge badge-${norm.toLowerCase()}">${esc(labelMap[norm] || norm)}</span>`;
   }
 
   function renderHeader(latest) {
@@ -128,7 +127,8 @@
             borderColor: "#1d4ed8",
             backgroundColor: "rgba(29, 78, 216, 0.12)",
             borderWidth: 3,
-            pointRadius: 4, clip: false,
+            pointRadius: 4,
+            clip: false,
             fill: true,
             tension: 0.25
           },
@@ -139,7 +139,8 @@
             backgroundColor: "transparent",
             borderWidth: 2,
             borderDash: [6, 4],
-            pointRadius: 4, clip: false,
+            pointRadius: 4,
+            clip: false,
             fill: false,
             tension: 0.25
           }
@@ -321,6 +322,289 @@
     URL.revokeObjectURL(url);
   }
 
+  function exportPdf() {
+    const btn = document.getElementById("exportPdfBtn");
+    const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor || !state.latest) {
+      alert("PDF library failed to load. Opening browser Print-to-PDF instead.");
+      window.print();
+      return;
+    }
+
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Generating PDF...";
+
+    try {
+      const doc = new jsPDFCtor({ orientation: "landscape", unit: "pt", format: "a4" });
+      if (typeof doc.autoTable !== "function") {
+        throw new Error("jspdf-autotable plugin unavailable");
+      }
+
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 36;
+      const contentW = pageW - margin * 2;
+      const latest = state.latest;
+      const s = latest.summary || {};
+      const meta = latest.risk_register_meta || {};
+      const govCount = (s.risk_accepted || 0) + (s.not_applicable || 0);
+      const rows = getFilteredFindings();
+
+      // Header Banner
+      doc.setFillColor(15, 41, 74);
+      doc.rect(0, 0, pageW, 68, "F");
+      doc.setFillColor(37, 99, 235);
+      doc.rect(0, 68, pageW, 3, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text(`${latest.project || "Project Watchtower"} - Audit Evidence Report`, margin, 27);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.setTextColor(203, 213, 225);
+      doc.text(
+        `${latest.framework || meta.framework || "ISO/IEC 27001:2022"} | AWS ${latest.region || "us-east-1"} | FinOps Guardrail: $${Number(meta.budget_guardrail_usd ?? 0).toFixed(2)}/mo`,
+        margin,
+        43
+      );
+      doc.setFontSize(8.5);
+      doc.text(
+        `Last Scan: ${formatTimestamp(latest.scan_timestamp)} | Owner: ${meta.owner || "Michael Loya (CyberBoy)"} | Review Cycle: ${meta.review_cycle || "Quarterly"}`,
+        margin,
+        57
+      );
+
+      // KPI Strip
+      const kpis = [
+        { label: "GOVERNED COMPLIANCE", value: `${Number(s.governed_compliance_pct || 0).toFixed(1)}%`, sub: `${(s.pass || 0) + govCount}/${s.automated_total || 0} automated`, color: [29, 78, 216] },
+        { label: "RAW AUTOMATED SCORE", value: `${Number(s.raw_compliance_pct || 0).toFixed(1)}%`, sub: `${s.pass || 0} pass / ${s.raw_fail || 0} raw fail`, color: [2, 132, 199] },
+        { label: "OPEN FAILURES", value: `${s.open_fail ?? 0}`, sub: (s.open_fail || 0) === 0 ? "Zero unmitigated fails" : "Action required", color: (s.open_fail || 0) === 0 ? [22, 101, 52] : [153, 27, 27] },
+        { label: "PASSED AUTOMATED", value: `${s.pass ?? 0}`, sub: `of ${s.automated_total || 0} (${s.total_evaluated || 0} total)`, color: [15, 41, 74] },
+        { label: "GOVERNED / MANUAL", value: `${govCount} / ${s.manual || 0}`, sub: `${s.risk_accepted || 0} accepted, ${s.not_applicable || 0} N/A`, color: [15, 41, 74] }
+      ];
+
+      const kpiY = 84;
+      const kpiGap = 10;
+      const kpiW = (contentW - kpiGap * 4) / 5;
+      const kpiH = 54;
+
+      kpis.forEach((k, i) => {
+        const x = margin + i * (kpiW + kpiGap);
+        doc.setFillColor(i === 0 ? 239 : 255, i === 0 ? 246 : 255, i === 0 ? 255 : 255);
+        doc.setDrawColor(i === 0 ? 191 : 226, i === 0 ? 219 : 232, i === 0 ? 254 : 240);
+        doc.roundedRect(x, kpiY, kpiW, kpiH, 6, 6, "FD");
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.setTextColor(71, 85, 105);
+        doc.text(k.label, x + 9, kpiY + 14);
+
+        doc.setFontSize(15);
+        doc.setTextColor(k.color[0], k.color[1], k.color[2]);
+        doc.text(k.value, x + 9, kpiY + 34);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7.5);
+        doc.setTextColor(100, 116, 139);
+        doc.text(k.sub, x + 9, kpiY + 46);
+      });
+
+      // Charts Row
+      const chartY = 150;
+      const chartGap = 14;
+      const chartBoxW = (contentW - chartGap) / 2;
+      const chartBoxH = 168;
+
+      const chartDefs = [
+        { id: "trendChart", title: "Compliance Remediation Trajectory" },
+        { id: "domainChart", title: "Annex A Domain Posture" }
+      ];
+
+      chartDefs.forEach((c, idx) => {
+        const x = margin + idx * (chartBoxW + chartGap);
+        doc.setFillColor(255, 255, 255);
+        doc.setDrawColor(226, 232, 240);
+        doc.roundedRect(x, chartY, chartBoxW, chartBoxH, 6, 6, "FD");
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9.5);
+        doc.setTextColor(15, 41, 74);
+        doc.text(c.title, x + 12, chartY + 18);
+
+        const canvas = document.getElementById(c.id);
+        if (canvas && canvas.width > 0 && canvas.height > 0) {
+          const img = canvas.toDataURL("image/png", 1.0);
+          const maxW = chartBoxW - 20;
+          const maxH = chartBoxH - 30;
+          const ratio = canvas.width / canvas.height;
+          let drawW = maxW;
+          let drawH = drawW / ratio;
+          if (drawH > maxH) {
+            drawH = maxH;
+            drawW = drawH * ratio;
+          }
+          const drawX = x + (chartBoxW - drawW) / 2;
+          const drawY = chartY + 24 + (maxH - drawH) / 2;
+          doc.addImage(img, "PNG", drawX, drawY, drawW, drawH);
+        }
+      });
+
+      // Control Assessment Table
+      const tableTitleY = chartY + chartBoxH + 22;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(15, 41, 74);
+      const filterNote = `Status: ${state.statusFilter} | Domain: ${state.domainFilter}` + (state.search.trim() ? ` | Search: "${state.search.trim()}"` : "");
+      doc.text(`Control Assessment Evidence (${rows.length} controls)`, margin, tableTitleY);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text(filterNote, pageW - margin, tableTitleY, { align: "right" });
+
+      const statusPalette = {
+        PASS: { fill: [220, 252, 231], text: [22, 101, 52] },
+        FAIL: { fill: [254, 226, 226], text: [153, 27, 27] },
+        RISK_ACCEPTED: { fill: [219, 234, 254], text: [30, 64, 175] },
+        NOT_APPLICABLE: { fill: [224, 242, 254], text: [7, 89, 133] },
+        MANUAL: { fill: [241, 245, 249], text: [71, 85, 105] }
+      };
+
+      const findingBody = rows.map((f) => {
+        const eff = String(f.effective_status || "MANUAL").toUpperCase();
+        const checkAndRes = [f.check_id || "Manual Assessment", f.resource ? `Resource: ${f.resource}` : ""].filter(Boolean).join("\n");
+        const evidenceParts = [f.details || "--"];
+        if (f.governance) {
+          evidenceParts.push(`[${f.governance.category || "Governance"}] ${f.governance.rationale}`);
+          evidenceParts.push(`Compensating Control: ${f.governance.compensating_control}`);
+        }
+        return [
+          `${f.control_id || ""}\n${f.control_name || ""}`.trim(),
+          f.category || "",
+          checkAndRes,
+          eff.replace("_", " "),
+          evidenceParts.join("\n")
+        ];
+      });
+
+      doc.autoTable({
+        startY: tableTitleY + 8,
+        margin: { left: margin, right: margin, bottom: 34 },
+        head: [["Control", "Domain", "Check & Resource", "Status", "Evidence & Governance"]],
+        body: findingBody.length ? findingBody : [["--", "--", "--", "--", "No controls match active filters."]],
+        theme: "grid",
+        styles: { fontSize: 7.5, cellPadding: 5, textColor: [15, 23, 42], overflow: "linebreak", valign: "top" },
+        headStyles: { fillColor: [15, 41, 74], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 8 },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        columnStyles: {
+          0: { cellWidth: 95, fontStyle: "bold" },
+          1: { cellWidth: 95 },
+          2: { cellWidth: 165 },
+          3: { cellWidth: 78, halign: "center", fontStyle: "bold" },
+          4: { cellWidth: contentW - 433 }
+        },
+        didParseCell: (data) => {
+          if (data.section === "body" && data.column.index === 3) {
+            const key = String(data.cell.raw || "").replace(/ /g, "_").toUpperCase();
+            const pal = statusPalette[key];
+            if (pal) {
+              data.cell.styles.fillColor = pal.fill;
+              data.cell.styles.textColor = pal.text;
+            }
+          }
+        }
+      });
+
+      // Appendix: Risk Register
+      const groupedRisks = new Map();
+      for (const f of latest.findings || []) {
+        if (!f.governance) continue;
+        const key = `${f.check_id}|${f.governance.decision}`;
+        if (!groupedRisks.has(key)) {
+          groupedRisks.set(key, { check_id: f.check_id, gov: f.governance, controls: new Set() });
+        }
+        if (f.control_id) groupedRisks.get(key).controls.add(f.control_id);
+      }
+
+      if (groupedRisks.size > 0) {
+        doc.addPage();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(15, 41, 74);
+        doc.text("Appendix: Risk Register & Compensating Controls", margin, 42);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.5);
+        doc.setTextColor(71, 85, 105);
+        doc.text(
+          `Risk Owner: ${meta.owner || "--"} | Last Reviewed: ${meta.last_reviewed || "--"} | Review Cycle: ${meta.review_cycle || "Quarterly"}`,
+          margin,
+          56
+        );
+
+        const riskBody = Array.from(groupedRisks.values()).map((item) => [
+          item.check_id,
+          String(item.gov.decision || "").replace("_", " "),
+          `${item.gov.category || ""}\nControls: ${Array.from(item.controls).sort().join(", ")}`,
+          item.gov.rationale || "",
+          item.gov.compensating_control || ""
+        ]);
+
+        doc.autoTable({
+          startY: 66,
+          margin: { left: margin, right: margin, bottom: 34 },
+          head: [["Check ID", "Decision", "Category & Controls", "Rationale", "Compensating Control"]],
+          body: riskBody,
+          theme: "grid",
+          styles: { fontSize: 7.5, cellPadding: 5, textColor: [15, 23, 42], overflow: "linebreak", valign: "top" },
+          headStyles: { fillColor: [29, 78, 216], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 8 },
+          alternateRowStyles: { fillColor: [248, 250, 252] },
+          columnStyles: {
+            0: { cellWidth: 140, fontStyle: "bold" },
+            1: { cellWidth: 78, halign: "center", fontStyle: "bold" },
+            2: { cellWidth: 122 },
+            3: { cellWidth: (contentW - 340) / 2 },
+            4: { cellWidth: (contentW - 340) / 2 }
+          },
+          didParseCell: (data) => {
+            if (data.section === "body" && data.column.index === 1) {
+              const key = String(data.cell.raw || "").replace(/ /g, "_").toUpperCase();
+              const pal = statusPalette[key];
+              if (pal) {
+                data.cell.styles.fillColor = pal.fill;
+                data.cell.styles.textColor = pal.text;
+              }
+            }
+          }
+        });
+      }
+
+      // Page Footers
+      const totalPages = doc.internal.getNumberOfPages();
+      const exportDate = new Date().toISOString().slice(0, 10);
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(margin, pageH - 28, pageW - margin, pageH - 28);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`${latest.project || "Project Watchtower"} - ISO/IEC 27001:2022 Audit Export (${exportDate})`, margin, pageH - 16);
+        doc.text(`Page ${i} of ${totalPages}`, pageW - margin, pageH - 16, { align: "right" });
+      }
+
+      doc.save(`watchtower-iso27001-audit-report-${exportDate}.pdf`);
+    } catch (err) {
+      console.error("PDF export failed:", err);
+      alert(`PDF generation error (${err.message}). Opening browser print dialog instead.`);
+      window.print();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  }
+
   function bindEvents() {
     document.querySelectorAll(".tab").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -351,6 +635,7 @@
     });
 
     document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+    document.getElementById("exportPdfBtn").addEventListener("click", exportPdf);
     document.getElementById("printReportBtn").addEventListener("click", () => window.print());
   }
 
@@ -377,7 +662,7 @@
       renderRiskRegister(state.latest);
     } catch (err) {
       const banner = document.getElementById("errorBanner");
-      banner.textContent = `Unable to load telemetry JSON (${err.message}). If previewing locally, serve the dashboard folder over HTTP (e.g., python -m http.server 8000 --directory dashboard).`;
+      banner.textContent = `Unable to load telemetry JSON (${err.message}). Serve the dashboard folder over HTTP (e.g., python -m http.server 8000 --directory dashboard).`;
       banner.classList.remove("hidden");
     }
   }
