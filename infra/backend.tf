@@ -9,7 +9,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "watchtower-tfstate-334767236822-us-east-1"
+    # Supplied locally via: terraform init -backend-config=backend.hcl
     key          = "phase1/terraform.tfstate"
     region       = "us-east-1"
     encrypt      = true

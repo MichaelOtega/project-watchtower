@@ -27,3 +27,6 @@ Thumbs.db
 tfplan
 
 prowler-output/
+
+# Local Terraform backend config
+**/backend.hcl
