@@ -107,7 +107,11 @@ def main() -> int:
             if row.get("REGION"):
                 region = row["REGION"].strip()
 
-            governance = exceptions.get(check_id) if status == "FAIL" else None
+            raw_exc = exceptions.get(check_id) if status == "FAIL" else None
+            if raw_exc and raw_exc.get("resource_contains"):
+                governance = raw_exc if raw_exc["resource_contains"] in resource_name else None
+            else:
+                governance = raw_exc
             effective_status = status
 
             if status == "PASS":

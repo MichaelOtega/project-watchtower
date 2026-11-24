@@ -4,7 +4,7 @@
     "owner": "Michael Loya (CyberBoy) - Cloud Security & GRC",
     "review_cycle": "Quarterly",
     "last_reviewed": "2026-11-24",
-    "budget_guardrail_usd": 1.00
+    "budget_guardrail_usd": 1.0
   },
   "exceptions": {
     "cloudtrail_kms_encryption_enabled": {
@@ -120,6 +120,19 @@
       "category": "FinOps / CloudWatch Always Free Cap",
       "rationale": "AWS Config is not enabled; alarm slot preserved within the 10-alarm free cap.",
       "compensating_control": "CloudTrail configuration change alarm and daily Prowler scans monitor audit pipeline integrity."
+    },
+    "cloudwatch_log_group_kms_encryption_enabled": {
+      "decision": "RISK_ACCEPTED",
+      "category": "FinOps / Budget Guardrail",
+      "rationale": "Customer-Managed KMS Keys (CMKs) cost $1.00/month plus API request fees, exceeding the zero-cost guardrail.",
+      "compensating_control": "CloudWatch Logs encrypts log group data at rest by default using AWS-managed AES-256 encryption, restricted to least-privilege IAM roles."
+    },
+    "s3_bucket_server_access_logging_enabled": {
+      "decision": "NOT_APPLICABLE",
+      "category": "Recursive Logging Prevention",
+      "resource_contains": "watchtower-access-logs",
+      "rationale": "Enabling server access logging on the dedicated access-logs sink bucket itself creates an infinite recursive log-generation and billing loop.",
+      "compensating_control": "All primary workload and audit buckets (audit-vault, tfstate) enforce S3 Server Access Logging into this hardened, TLS-only, non-public sink bucket."
     }
   }
 }

@@ -1,7 +1,7 @@
 # CloudWatch Log Group for CloudTrail (30-day retention keeps storage inside 5 GB Always Free cap)
 resource "aws_cloudwatch_log_group" "cloudtrail" {
   name              = "/aws/cloudtrail/watchtower-management-trail"
-  retention_in_days = 30
+  retention_in_days = 365
 }
 
 data "aws_iam_policy_document" "cloudtrail_cw_assume" {
