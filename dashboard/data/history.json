@@ -34,5 +34,14 @@
     "governed": 44,
     "raw_compliance_pct": 76.7,
     "governed_compliance_pct": 99.5
+  },
+  {
+    "timestamp": "2026-11-25 10:39:07.129972",
+    "pass": 159,
+    "raw_fail": 55,
+    "open_fail": 7,
+    "governed": 48,
+    "raw_compliance_pct": 74.3,
+    "governed_compliance_pct": 96.7
   }
 ]

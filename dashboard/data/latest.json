@@ -2,23 +2,23 @@
   "project": "Watchtower CSPM",
   "framework": "ISO/IEC 27001:2022",
   "region": "us-east-1",
-  "scan_timestamp": "2026-11-24 11:46:43.067900",
+  "scan_timestamp": "2026-11-25 10:39:07.129972",
   "summary": {
-    "total_evaluated": 252,
-    "automated_total": 193,
-    "pass": 148,
-    "raw_fail": 45,
-    "open_fail": 1,
-    "risk_accepted": 29,
+    "total_evaluated": 273,
+    "automated_total": 214,
+    "pass": 159,
+    "raw_fail": 55,
+    "open_fail": 7,
+    "risk_accepted": 33,
     "not_applicable": 15,
     "manual": 59,
-    "raw_compliance_pct": 76.7,
-    "governed_compliance_pct": 99.5
+    "raw_compliance_pct": 74.3,
+    "governed_compliance_pct": 96.7
   },
   "domains": [
     {
       "name": "A.5 Organizational controls",
-      "pass": 46,
+      "pass": 48,
       "open_fail": 0,
       "governed": 7,
       "manual": 22
@@ -39,9 +39,9 @@
     },
     {
       "name": "A.8 Technological controls",
-      "pass": 102,
-      "open_fail": 1,
-      "governed": 37,
+      "pass": 111,
+      "open_fail": 7,
+      "governed": 41,
       "manual": 15
     }
   ],
@@ -74,11 +74,11 @@
       "objective_id": "A.8.3",
       "objective_name": "Information Access Restriction",
       "check_id": "accessanalyzer_enabled_without_findings",
-      "raw_status": "PASS",
-      "effective_status": "PASS",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
       "severity": "Low",
       "resource": "watchtower-external-access-analyzer",
-      "details": "IAM Access Analyzer watchtower-external-access-analyzer does not have active findings.",
+      "details": "IAM Access Analyzer watchtower-external-access-analyzer has 1 active findings.",
       "governance": null
     },
     {
@@ -131,11 +131,16 @@
       "objective_name": "Information Backup",
       "check_id": "backup_reportplans_exist",
       "raw_status": "FAIL",
-      "effective_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
       "severity": "Low",
       "resource": "********6822",
       "details": "No Backup Report Plan exist.",
-      "governance": null
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "AWS Backup Audit Manager report plans and compliance frameworks introduce AWS Config resource tracking and evaluation fees, exceeding the $0.00/mo budget guardrail, and no production workloads are assigned to backup jobs.",
+        "compensating_control": "Baseline AWS Backup vault and daily retention plan are codified in Terraform; state and audit evidence are versioned in S3 and continuously verified via Prowler and GitHub Actions."
+      }
     },
     {
       "control_id": "A.8.24",
@@ -189,6 +194,20 @@
       "raw_status": "PASS",
       "effective_status": "PASS",
       "severity": "High",
+      "resource": "watchtower-dashboard-deployer",
+      "details": "IAM Role watchtower-dashboard-deployer does not have AmazonBedrockFullAccess policy attached.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.2",
+      "control_name": "Privileged Access Rights",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.2",
+      "objective_name": "Privileged Access Rights",
+      "check_id": "bedrock_full_access_policy_attached",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "High",
       "resource": "watchtower-prowler-scanner",
       "details": "IAM Role watchtower-prowler-scanner does not have AmazonBedrockFullAccess policy attached.",
       "governance": null
@@ -211,6 +230,90 @@
         "rationale": "Amazon Bedrock is not provisioned or invoked in this AWS account.",
         "compensating_control": "Zero Bedrock usage verified via CloudTrail and AWS Budgets monitoring."
       }
+    },
+    {
+      "control_id": "A.8.11",
+      "control_name": "Data Masking",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.11",
+      "objective_name": "Data Masking",
+      "check_id": "cloudfront_distributions_field_level_encryption_enabled",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
+      "severity": "Low",
+      "resource": "E11OFFEHWPLRUK",
+      "details": "CloudFront Distribution E11OFFEHWPLRUK has Field Level Encryption disabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.24",
+      "control_name": "Use of Cryptography",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.24",
+      "objective_name": "Use of Cryptography",
+      "check_id": "cloudfront_distributions_field_level_encryption_enabled",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
+      "severity": "Low",
+      "resource": "E11OFFEHWPLRUK",
+      "details": "CloudFront Distribution E11OFFEHWPLRUK has Field Level Encryption disabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.15",
+      "control_name": "Logging",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.15",
+      "objective_name": "Logging",
+      "check_id": "cloudfront_distributions_logging_enabled",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
+      "severity": "Medium",
+      "resource": "E11OFFEHWPLRUK",
+      "details": "CloudFront Distribution E11OFFEHWPLRUK has logging disabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.16",
+      "control_name": "Monitoring Activities",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.16",
+      "objective_name": "Monitoring Activities",
+      "check_id": "cloudfront_distributions_logging_enabled",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
+      "severity": "Medium",
+      "resource": "E11OFFEHWPLRUK",
+      "details": "CloudFront Distribution E11OFFEHWPLRUK has logging disabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.14",
+      "control_name": "Redundancy of information processing facilities",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.14",
+      "objective_name": "Redundancy of information processing facilities",
+      "check_id": "cloudfront_distributions_multiple_origin_failover_configured",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Low",
+      "resource": "E11OFFEHWPLRUK",
+      "details": "CloudFront Distribution E11OFFEHWPLRUK has an origin group with at least 2 origins configured.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.24",
+      "control_name": "Use of Cryptography",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.24",
+      "objective_name": "Use of Cryptography",
+      "check_id": "cloudfront_distributions_origin_traffic_encrypted",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
+      "resource": "E11OFFEHWPLRUK",
+      "details": "CloudFront Distribution E11OFFEHWPLRUK does encrypt traffic to custom origins.",
+      "governance": null
     },
     {
       "control_id": "A.8.15",
@@ -1299,7 +1402,7 @@
       "effective_status": "RISK_ACCEPTED",
       "severity": "High",
       "resource": "<root_account>",
-      "details": "Root user in the account was last accessed 0 days ago.",
+      "details": "Root user in the account was last accessed 1 days ago.",
       "governance": {
         "decision": "RISK_ACCEPTED",
         "category": "Historical Bootstrap Event",
@@ -1799,6 +1902,34 @@
       "category": "A.5 Organizational controls",
       "objective_id": "A.5.18",
       "objective_name": "Access Rights",
+      "check_id": "iam_inline_policy_no_administrative_privileges",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Critical",
+      "resource": "watchtower-dashboard-deployer/watchtower-dashboard-s3-cf-deploy",
+      "details": "Inline policy watchtower-dashboard-s3-cf-deploy attached to role watchtower-dashboard-deployer does not allow '*:*' administrative privileges.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.2",
+      "control_name": "Privileged Access Rights",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.2",
+      "objective_name": "Privileged Access Rights",
+      "check_id": "iam_inline_policy_no_administrative_privileges",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Critical",
+      "resource": "watchtower-dashboard-deployer/watchtower-dashboard-s3-cf-deploy",
+      "details": "Inline policy watchtower-dashboard-s3-cf-deploy attached to role watchtower-dashboard-deployer does not allow '*:*' administrative privileges.",
+      "governance": null
+    },
+    {
+      "control_id": "A.5.18",
+      "control_name": "Access Rights",
+      "category": "A.5 Organizational controls",
+      "objective_id": "A.5.18",
+      "objective_name": "Access Rights",
       "check_id": "iam_inline_policy_no_wildcard_marketplace_subscribe",
       "raw_status": "PASS",
       "effective_status": "PASS",
@@ -1903,6 +2034,34 @@
       "severity": "Medium",
       "resource": "watchtower-cloudtrail-cw-role/watchtower-cloudtrail-cw-policy",
       "details": "Inline policy watchtower-cloudtrail-cw-policy attached to role watchtower-cloudtrail-cw-role does not allow 'aws-marketplace:Subscribe' on all resources.",
+      "governance": null
+    },
+    {
+      "control_id": "A.5.18",
+      "control_name": "Access Rights",
+      "category": "A.5 Organizational controls",
+      "objective_id": "A.5.18",
+      "objective_name": "Access Rights",
+      "check_id": "iam_inline_policy_no_wildcard_marketplace_subscribe",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
+      "resource": "watchtower-dashboard-deployer/watchtower-dashboard-s3-cf-deploy",
+      "details": "Inline policy watchtower-dashboard-s3-cf-deploy attached to role watchtower-dashboard-deployer does not allow 'aws-marketplace:Subscribe' on all resources.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.2",
+      "control_name": "Privileged Access Rights",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.2",
+      "objective_name": "Privileged Access Rights",
+      "check_id": "iam_inline_policy_no_wildcard_marketplace_subscribe",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
+      "resource": "watchtower-dashboard-deployer/watchtower-dashboard-s3-cf-deploy",
+      "details": "Inline policy watchtower-dashboard-s3-cf-deploy attached to role watchtower-dashboard-deployer does not allow 'aws-marketplace:Subscribe' on all resources.",
       "governance": null
     },
     {
@@ -2154,7 +2313,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "AWSServiceRoleForResourceExplorer",
-      "details": "IAM Role AWSServiceRoleForResourceExplorer accessed Bedrock 2 days ago (threshold: 60 days).",
+      "details": "IAM Role AWSServiceRoleForResourceExplorer accessed Bedrock 0 days ago (threshold: 60 days).",
       "governance": null
     },
     {
@@ -2187,7 +2346,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "DatadogIntegrationRole",
-      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 18 days ago (threshold: 60 days).",
+      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 19 days ago (threshold: 60 days).",
       "governance": null
     },
     {
@@ -2538,6 +2697,25 @@
       "raw_status": "FAIL",
       "effective_status": "RISK_ACCEPTED",
       "severity": "Low",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 does not have correct cross region replication configuration.",
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "Single-Region Scope",
+        "rationale": "Cross-Region Replication introduces inter-region data transfer and duplicate storage costs for non-production audit logs.",
+        "compensating_control": "Single-region us-east-1 S3 Standard durability (11 nines across multiple AZs) with versioning enabled."
+      }
+    },
+    {
+      "control_id": "A.8.14",
+      "control_name": "Redundancy of information processing facilities",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.14",
+      "objective_name": "Redundancy of information processing facilities",
+      "check_id": "s3_bucket_cross_region_replication",
+      "raw_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
+      "severity": "Low",
       "resource": "watchtower-tfstate-********6822-us-east-1",
       "details": "S3 Bucket watchtower-tfstate-********6822-us-east-1 does not have correct cross region replication configuration.",
       "governance": {
@@ -2613,6 +2791,34 @@
       "raw_status": "PASS",
       "effective_status": "PASS",
       "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 has Server Side Encryption with AES256.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.24",
+      "control_name": "Use of Cryptography",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.24",
+      "objective_name": "Use of Cryptography",
+      "check_id": "s3_bucket_default_encryption",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 has Server Side Encryption with AES256.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.11",
+      "control_name": "Data Masking",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.11",
+      "objective_name": "Data Masking",
+      "check_id": "s3_bucket_default_encryption",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
       "resource": "watchtower-tfstate-********6822-us-east-1",
       "details": "S3 Bucket watchtower-tfstate-********6822-us-east-1 has Server Side Encryption with AES256.",
       "governance": null
@@ -2717,6 +2923,44 @@
       "raw_status": "FAIL",
       "effective_status": "RISK_ACCEPTED",
       "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "Server Side Encryption is not configured with kms for S3 Bucket watchtower-cspm-dashboard-********6822.",
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "KMS CMK billing ($1.00/key/month) is excluded under zero-cost architecture.",
+        "compensating_control": "All S3 buckets enforce AES-256 server-side encryption, HTTPS-only transport, versioning, and account-level Block Public Access."
+      }
+    },
+    {
+      "control_id": "A.8.24",
+      "control_name": "Use of Cryptography",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.24",
+      "objective_name": "Use of Cryptography",
+      "check_id": "s3_bucket_kms_encryption",
+      "raw_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
+      "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "Server Side Encryption is not configured with kms for S3 Bucket watchtower-cspm-dashboard-********6822.",
+      "governance": {
+        "decision": "RISK_ACCEPTED",
+        "category": "FinOps / Budget Guardrail",
+        "rationale": "KMS CMK billing ($1.00/key/month) is excluded under zero-cost architecture.",
+        "compensating_control": "All S3 buckets enforce AES-256 server-side encryption, HTTPS-only transport, versioning, and account-level Block Public Access."
+      }
+    },
+    {
+      "control_id": "A.8.11",
+      "control_name": "Data Masking",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.11",
+      "objective_name": "Data Masking",
+      "check_id": "s3_bucket_kms_encryption",
+      "raw_status": "FAIL",
+      "effective_status": "RISK_ACCEPTED",
+      "severity": "Medium",
       "resource": "watchtower-tfstate-********6822-us-east-1",
       "details": "Server Side Encryption is not configured with kms for S3 Bucket watchtower-tfstate-********6822-us-east-1.",
       "governance": {
@@ -2771,6 +3015,20 @@
       "severity": "Low",
       "resource": "watchtower-audit-vault-********6822-us-east-1",
       "details": "S3 Bucket watchtower-audit-vault-********6822-us-east-1 has a lifecycle configuration enabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.10",
+      "control_name": "Information Deletion",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.10",
+      "objective_name": "Information Deletion",
+      "check_id": "s3_bucket_lifecycle_enabled",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
+      "severity": "Low",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 does not have a lifecycle configuration enabled.",
       "governance": null
     },
     {
@@ -2853,6 +3111,34 @@
       "raw_status": "PASS",
       "effective_status": "PASS",
       "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 has versioning enabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.10",
+      "control_name": "Information Deletion",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.10",
+      "objective_name": "Information Deletion",
+      "check_id": "s3_bucket_object_versioning",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 has versioning enabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.3",
+      "control_name": "Information Access Restriction",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.3",
+      "objective_name": "Information Access Restriction",
+      "check_id": "s3_bucket_object_versioning",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Medium",
       "resource": "watchtower-tfstate-********6822-us-east-1",
       "details": "S3 Bucket watchtower-tfstate-********6822-us-east-1 has versioning enabled.",
       "governance": null
@@ -2896,6 +3182,20 @@
       "effective_status": "PASS",
       "severity": "Critical",
       "resource": "watchtower-audit-vault-********6822-us-east-1",
+      "details": "All S3 public access blocked at account level.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.1",
+      "control_name": "User Endpoint Devices",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.1",
+      "objective_name": "User Endpoint Devices",
+      "check_id": "s3_bucket_policy_public_write_access",
+      "raw_status": "PASS",
+      "effective_status": "PASS",
+      "severity": "Critical",
+      "resource": "watchtower-cspm-dashboard-********6822",
       "details": "All S3 public access blocked at account level.",
       "governance": null
     },
@@ -2959,6 +3259,20 @@
       "severity": "Medium",
       "resource": "watchtower-audit-vault-********6822-us-east-1",
       "details": "S3 Bucket watchtower-audit-vault-********6822-us-east-1 has server access logging enabled.",
+      "governance": null
+    },
+    {
+      "control_id": "A.8.15",
+      "control_name": "Logging",
+      "category": "A.8 Technological controls",
+      "objective_id": "A.8.15",
+      "objective_name": "Logging",
+      "check_id": "s3_bucket_server_access_logging_enabled",
+      "raw_status": "FAIL",
+      "effective_status": "FAIL",
+      "severity": "Medium",
+      "resource": "watchtower-cspm-dashboard-********6822",
+      "details": "S3 Bucket watchtower-cspm-dashboard-********6822 has server access logging disabled.",
       "governance": null
     },
     {
