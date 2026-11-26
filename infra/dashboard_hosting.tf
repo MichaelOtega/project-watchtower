@@ -142,7 +142,7 @@ data "aws_iam_policy_document" "dashboard_deployer_trust" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:MichaelOtega/Project-WatchTower:ref:refs/heads/main"]
+      values   = ["repo:MichaelOtega/project-watchtower:ref:refs/heads/main"]
     }
   }
 }
@@ -193,3 +193,4 @@ output "cloudfront_url" {
 output "dashboard_deployer_role_arn" {
   value = aws_iam_role.dashboard_deployer.arn
 }
+
