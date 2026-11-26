@@ -2,7 +2,7 @@
   "project": "Watchtower CSPM",
   "framework": "ISO/IEC 27001:2022",
   "region": "us-east-1",
-  "scan_timestamp": "2026-11-26 10:10:31.394057",
+  "scan_timestamp": "2026-11-26 20:56:38.641597",
   "summary": {
     "total_evaluated": 273,
     "automated_total": 214,
@@ -2341,7 +2341,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "DatadogIntegrationRole",
-      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 19 days ago (threshold: 60 days).",
+      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 20 days ago (threshold: 60 days).",
       "governance": null
     },
     {
@@ -2500,7 +2500,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "MichaelAdmin",
-      "details": "User MichaelAdmin has logged in to the console in the past 45 days (1 days).",
+      "details": "User MichaelAdmin has logged in to the console in the past 45 days (2 days).",
       "governance": null
     },
     {
