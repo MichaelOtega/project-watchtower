@@ -1,0 +1,45 @@
+﻿name: Deploy Watchtower Dashboard to AWS CloudFront
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dashboard/**"
+  workflow_run:
+    workflows: ["Watchtower Prowler ISO 27001 Scan"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: "aws-dashboard-deploy"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOYER_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Sync dashboard to private S3 bucket
+        run: |
+          aws s3 sync dashboard/ s3://${{ vars.DASHBOARD_BUCKET }}/ \
+            --delete \
+            --cache-control "public, max-age=300"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ vars.CLOUDFRONT_DIST_ID }} \
+            --paths "/*"
