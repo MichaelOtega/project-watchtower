@@ -2,7 +2,7 @@
   "project": "Watchtower CSPM",
   "framework": "ISO/IEC 27001:2022",
   "region": "us-east-1",
-  "scan_timestamp": "2026-11-27 10:16:51.815405",
+  "scan_timestamp": "2026-11-28 09:34:47.248494",
   "summary": {
     "total_evaluated": 273,
     "automated_total": 214,
@@ -1402,7 +1402,7 @@
       "effective_status": "RISK_ACCEPTED",
       "severity": "High",
       "resource": "<root_account>",
-      "details": "Root user in the account was last accessed 0 days ago.",
+      "details": "Root user in the account was last accessed 1 days ago.",
       "governance": {
         "decision": "RISK_ACCEPTED",
         "category": "Historical Bootstrap Event",
@@ -2313,7 +2313,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "AWSServiceRoleForResourceExplorer",
-      "details": "IAM Role AWSServiceRoleForResourceExplorer accessed Bedrock 0 days ago (threshold: 60 days).",
+      "details": "IAM Role AWSServiceRoleForResourceExplorer accessed Bedrock 1 days ago (threshold: 60 days).",
       "governance": null
     },
     {
@@ -2346,7 +2346,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "DatadogIntegrationRole",
-      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 20 days ago (threshold: 60 days).",
+      "details": "IAM Role DatadogIntegrationRole accessed Bedrock 21 days ago (threshold: 60 days).",
       "governance": null
     },
     {
@@ -2505,7 +2505,7 @@
       "effective_status": "PASS",
       "severity": "Medium",
       "resource": "MichaelAdmin",
-      "details": "User MichaelAdmin has logged in to the console in the past 45 days (2 days).",
+      "details": "User MichaelAdmin has logged in to the console in the past 45 days (3 days).",
       "governance": null
     },
     {
